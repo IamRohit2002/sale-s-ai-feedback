@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+</head>
+
+<body>
+
+    <h1>Feedback Form</h1>
+
+    <form id="feedbackForm">
+        <label for="shopName">Shop Name:</label>
+        <select id="shopName" name="shopName" required></select><br>
+
+        <label for="feedback">Feedback:</label>
+        <textarea id="feedback" name="feedback" rows="4" required></textarea><br>
+
+        <button type="button" onclick="submitFeedback()">Submit Feedback</button>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMH_J7kG74WlZkwkhiqbhMMh8G4_VXv78",
+            authDomain: "login-21cc2.firebaseapp.com",
+            projectId: "login-21cc2",
+            storageBucket: "login-21cc2.appspot.com",
+            messagingSenderId: "42703193426",
+            appId: "1:42703193426:web:76b5212fd0ee10f8e9668b"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Assuming you have a collection named 'companies' with documents representing companies
+        const companiesRef = firebase.database().ref('companies');
+
+        // Fetch company names and populate the dropdown
+        companiesRef.on('value', (snapshot) => {
+            const shopNameDropdown = document.getElementById('shopName');
+            shopNameDropdown.innerHTML = ""; // Clear existing options
+
+            snapshot.forEach((companySnapshot) => {
+                const companyName = companySnapshot.key;
+                const option = document.createElement("option");
+                option.text = companyName;
+                option.value = companyName;
+                shopNameDropdown.add(option);
+            });
+        });
+
+        function submitFeedback() {
+            const shopName = document.getElementById('shopName').value;
+            const feedback = document.getElementById('feedback').value;
+
+            // Replace spaces and special characters in shopName to create a suitable path
+            const shopPath = shopName.replace(/[^a-zA-Z0-9]/g, '');
+
+            // Assuming you have a collection named 'feedback' in Realtime Database
+            const feedbackRef = firebase.database().ref(`feedback/${shopPath}`);
+
+            // Generate a unique key for each feedback entry
+            const newFeedbackRef = feedbackRef.push();
+
+            // Save the feedback to the database
+            newFeedbackRef.set({
+                shopName: shopName,
+                feedback: feedback
+            });
+
+            alert('Feedback submitted successfully!');
+        }
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMH_J7kG74WlZkwkhiqbhMMh8G4_VXv78",
+            authDomain: "login-21cc2.firebaseapp.com",
+            projectId: "login-21cc2",
+            storageBucket: "login-21cc2.appspot.com",
+            messagingSenderId: "42703193426",
+            appId: "1:42703193426:web:76b5212fd0ee10f8e9668b"
+        };
+    
+    -->
